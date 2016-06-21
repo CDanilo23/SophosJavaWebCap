@@ -1,0 +1,143 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../templates/templateContenido.xhtml">
+	<ui:define name="contenido">
+
+		<h:form id="search"
+			onkeypress="if (event.keyCode === 13) {
+                    return false;
+                }">
+			<h1>Administración de estudiantes - Capacitación</h1>
+
+			<p:outputPanel id="panelPrueba">
+				<p:tabView id="panelPestanas">
+					<p:ajax event="tabChange" process="@form" update="panelPestanas"
+						onstart="PF('dlgLoading').show()"
+						oncomplete="PF('dlgLoading').hide()" />
+					<p:spacer height="5" />
+					<p:messages id="messages" autoUpdate="true" closable="true" />
+					<p:spacer height="5" />
+
+					<p:tab id="tab1" title="Categorias">
+
+						<p:panel id="panelContenedorPadre" header="Informacion Categorias" style="text-align: left">
+							<div align="center">
+							  
+								   <p:panel id="panelContenedorTabla">
+                                                                       <p:panelGrid columns="4" id="gridcategoriasPrincipal" rendered="#{categoriasController.flagDataTable}">
+				
+												<p:dataTable value="#{categoriasController.listaCategorias}"
+													id="dtCategorias" var="categoria" paginator="true" rows="5"
+													paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+													emptyMessage="No se encontraron categorias"
+													rowsPerPageTemplate="5,10,15" styleClass="tablaRes">
+													<f:facet name="header">  
+				                                         Lista categorias
+				                                     </f:facet>
+				
+													<p:column headerText="Nombre" sortBy="#{categoria.catname}"
+														filterBy="#{categoria.catname}" filterMatchMode="contains">
+														<h:outputText value="#{categoria.catname}" />
+													</p:column>
+				
+													<p:column headerText="Descripcion"
+														sortBy="#{categoria.catdescription}"
+														filterBy="#{categoria.catdescription}"
+														filterMatchMode="contains">
+														<h:outputText value="#{categoria.catdescription}" />
+													</p:column>
+				
+													<p:column headerText="Descripcion 2"
+														sortBy="#{categoria.catkeywords}"
+														filterBy="#{categoria.catkeywords}" filterMatchMode="contains">
+														<h:outputText value="#{categoria.catkeywords}" />
+													</p:column>
+				
+													<!-- Editar -->
+													<p:column headerText="Editar" style="font-size:11px; font-weight: bold">
+														<p:commandLink>
+															<p:ajax listener="#{categoriasController.prepararEdicionCategoria(categoria)}" update="@form" immediate="true" />
+															<p:graphicImage id="imgEdit" value="/resources/img/editar.png" />
+														</p:commandLink>
+													</p:column>
+				
+													<!--Eliminar-->
+													<p:column headerText="Eliminar" style="font-size:11px; font-weight: bold">
+														<p:commandLink action="#{categoriasController.eliminarCategoria(categoria)}"
+															onclick="if (!confirm('Esta seguro que desea eliminar este registro?'))
+				                                                                return false;"
+															ajax="false" immediate="true" process="@form">
+															<p:graphicImage id="imgElim"
+																value="/resources/img/eliminar.png" />
+														</p:commandLink>
+													</p:column>
+				
+												</p:dataTable>
+											</p:panelGrid>
+				
+                                                                       <p:panel header="Informacion categoria" style="text-align: left" id="paneltabprincipal" rendered="#{categoriasController.flagCreacionEdicion}">
+												 <p:panelGrid columns="4">
+													
+
+                                                                                                     <p:outputLabel for="nomCategoria" value="Nombre: " />
+                                                                                                     <p:inputText id="nomCategoria" value="#{categoriasController.categoriaCurrent.catname}" />
+                                                                                                     <p:outputLabel for="desCategoria" value="Descripcion: " />
+                                                                                                     <p:inputText id="desCategoria" value="#{categoriasController.categoriaCurrent.catdescription}" />
+														
+													
+													<p:spacer height="25" />
+											    </p:panelGrid>
+											   
+                                                                           <div align ="center">
+                                                                               
+                                                                                  
+                                                                                    
+                                                                               
+                                                                               <p:outputPanel rendered="#{categoriasController.flagEdicionCategoria}">
+                                                                                   <p:commandLink> 
+                                                                                       <p:ajax listener="#{categoriasController.prepararEdicionCategoria2()}"  />
+                                                                                       <p:graphicImage id="imgEdit" value="/resources/img/editar.png" />
+                                                                                   </p:commandLink>
+                                                                               </p:outputPanel>	
+
+                                                                               <p:outputPanel rendered="#{categoriasController.flagCreacionCategoria}">
+                                                                                   <p:commandButton value="Guardar" action="#{categoriasController.crearCategoria()}" update="panelPestanas" onclick="PF('dlgLoading').show()" oncomplete="PF('dlgLoading').hide();"/>
+                                                                               </p:outputPanel>
+                                                                           </div>			
+											  
+											</p:panel>
+									</p:panel>
+								</div>
+                                                    <p:spacer height="12"/>
+						 <div align ="center">
+                                                     <p:outputPanel rendered="#{categoriasController.flagCreacionCategoria}">
+                                                         <p:commandButton value="Nueva Categoria" action="#{categoriasController.prepararCreacionCategoria()}" update="panelPestanas" onclick="PF('dlgLoading').show()" oncomplete="PF('dlgLoading').hide(); " />
+							</p:outputPanel>
+						</div>
+					</p:panel>	
+					</p:tab>
+
+					<p:tab id="tab2" title="Estudiantes">
+
+					</p:tab>
+
+					<p:tab id="tab3" title="Cursos">
+
+					</p:tab>
+
+				</p:tabView>
+			</p:outputPanel>
+
+
+			<p:dialog showHeader="false" widgetVar="dlgLoading" resizable="false"
+				modal="true" closable="false">
+				<p:panel>
+					<p:graphicImage value="/resources/img/loading.gif" />
+				</p:panel>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
