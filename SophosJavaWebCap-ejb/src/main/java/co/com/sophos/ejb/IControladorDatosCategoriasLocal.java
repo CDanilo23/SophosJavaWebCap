@@ -5,7 +5,7 @@
  */
 package co.com.sophos.ejb;
 
-import co.com.sophos.entities.Sophoscapcategories;
+import co.com.sophos.entidades.Sophoscapcategories;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -14,7 +14,7 @@ import javax.ejb.Local;
  * @author Cristian Ordoñez
  */
 @Local
-public interface IControladorDatosSessionBeanLocal {
+public interface IControladorDatosCategoriasLocal {
 
     List<Sophoscapcategories> listarCategorias();
 

@@ -5,8 +5,7 @@
  */
 package co.com.sophos.ejb;
 
-import co.com.sophos.entities.Sophoscapcategories;
-import java.util.ArrayList;
+import co.com.sophos.entidades.Sophoscapcategories;
 import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -18,15 +17,15 @@ import javax.persistence.Query;
  *
  * @author Cristian Ordoñez
  */
-@Stateless(name = "ControladorDatosSession", mappedName = "ControladorDatosSessionBean")
-@LocalBean
-public class ControladorDatosSession implements IControladorDatosSessionBeanLocal {
+@Stateless(name = "ControladorDatosCategorias", mappedName = "ControladorDatosCategoriasBean")
+public class ControladorDatosCategorias implements IControladorDatosCategoriasLocal {
     
     @PersistenceContext(unitName = "OraclePU")
     private EntityManager em;
     
+    @Override
     public List<Sophoscapcategories> listarCategorias() {
-        Query query = em.createQuery("select cat from Sophoscapcategories cat");
+        Query query = em.createNamedQuery("Sophoscapcategories.findAll");
         return query.getResultList();
     }
     
@@ -45,7 +44,9 @@ public class ControladorDatosSession implements IControladorDatosSessionBeanLoca
         em.merge(sophoscapcategories);
     }
     
-     public void eliminarCategoria(Sophoscapcategories dto) {
-          em.remove(dto);
+    @Override
+     public void eliminarCategoria(Sophoscapcategories sophoscapcategories) {
+         sophoscapcategories = em.find(Sophoscapcategories.class, sophoscapcategories.getCatid());
+         em.remove(sophoscapcategories);
      }
 }

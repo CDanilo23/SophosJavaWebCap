@@ -1,0 +1,172 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="../templates/templateContenido.xhtml">
+    <ui:define name="contenido">
+        <h:form id="search" onkeypress="if (event.keyCode === 13) {
+                    return false;
+                }">
+
+            <h1>Configuracion Estudiantes</h1>
+
+            <p:panel id="panelContenedorPadre" header="Informacion Estudiantes" style="text-align: left">
+                <div align="center">
+
+                    <p:panel id="panelContenedorTabla">
+                        <p:panelGrid columns="4" id="gridEstudiantesPrincipal" rendered="#{creacionEdicionEstudianteController.flagDataTable}">
+
+                            <p:dataTable value="#{creacionEdicionEstudianteController.estudiantes}"
+                                         id="dtCapacitaciones" 
+                                         paginator="true" 
+                                         rows="5"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         emptyMessage="No se encontraron estudiantes"
+                                         rowsPerPageTemplate="5,10,15" 
+                                         styleClass="tablaRes"
+                                         var="estu" scrollWidth="95%" scrollable="true">
+                                <f:facet name="header">  
+                                    Lista estudiantes
+                                </f:facet>
+
+                                <p:column headerText="Codigo" 
+                                          width="30%"
+                                          sortBy="#{estu.empestEmployeeid}"
+                                          filterBy="#{estu.empestEmployeeid}"
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{estu.empestEmployeeid}" />
+                                </p:column>
+
+                                <p:column headerText="Nombre"
+                                          width="30%"
+                                          sortBy="#{estu.empestEmployeeshortname}"
+                                          filterBy="#{estu.empestEmployeeshortname}" 
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{estu.empestEmployeeshortname}" />
+                                </p:column>
+
+                                <p:column headerText="Cargo"
+                                          width="30%"
+                                          sortBy="#{estu.cargo}"
+                                          filterBy="#{estu.cargo}" 
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{estu.cargo}" />
+                                </p:column>
+
+                                <p:column headerText="Email"
+                                          width="60%"
+                                          sortBy="#{estu.email}"
+                                          filterBy="#{estu.email}"
+                                          filterMatchMode="contains"
+                                          >
+                                    <h:outputText value="#{estu.email}" />
+                                </p:column>
+
+                                <p:column headerText="Telefono"
+                                          width="30%"
+                                          sortBy="#{estu.telefono}"
+                                          filterBy="#{estu.telefono}" 
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{estu.telefono}" />
+                                </p:column>
+
+                                <!-- Editar -->
+                                <p:column headerText="Editar"
+                                          width="15%"
+                                          style="font-size:11px; font-weight: bold">
+                                    <div align ="center">
+                                        <p:commandLink>
+                                            <p:ajax listener="#{creacionEdicionEstudianteController.prepararEdicionEstudiante(estu)}" 
+                                                    update="@form" immediate="true" />
+                                            <p:graphicImage id="imgEdit" value="/resources/img/editar.png"/>
+                                        </p:commandLink>
+                                    </div>    
+                                </p:column>
+
+                                <!--Eliminar-->
+                                <p:column headerText="Eliminar"
+                                          width="15%"
+                                          style="font-size:11px; font-weight: bold">
+                                    <div align ="center">
+                                        <p:commandLink action="#{creacionEdicionEstudianteController.eliminarEstudiante(estu)}"
+                                                       onclick="if (!confirm('Esta seguro que desea eliminar este registro?'))
+                                                                   return false;"
+                                                       ajax="false" immediate="true" process="@form">
+                                            <p:graphicImage id="imgElim"
+                                                            value="/resources/img/eliminar.png" />
+                                        </p:commandLink>
+                                    </div>
+                                </p:column>
+
+                            </p:dataTable>
+                        </p:panelGrid>
+
+                        <p:panel header="Informacion Estudiante" style="text-align: left" id="paneltabprincipal"
+                                 rendered="#{creacionEdicionEstudianteController.flagCEestudiante}">
+                            <p:panelGrid columns="4">
+
+                                <p:outputLabel for="codEst" value="Codigo: " />
+                                <h:inputText id="codEst" maxlength="5" value="#{creacionEdicionEstudianteController.estudianteCurrent.empestEmployeeid}"/>
+
+                                <p:outputLabel for="nomCapacitacion" value="Nombre: " />
+                                <h:inputText id="nomCapacitacion" value="#{creacionEdicionEstudianteController.estudianteCurrent.empestEmployeeshortname}" />
+
+                                <p:outputLabel for="cargoEst" value="Cargo: " />
+                                <h:inputText id="cargoEst" value="#{creacionEdicionEstudianteController.estudianteCurrent.cargo}" />
+
+                                <p:outputLabel for="emailEst" value="Email: " />
+                                <h:inputText id="emailEst" value="#{creacionEdicionEstudianteController.estudianteCurrent.email}" />
+
+                                <p:outputLabel for="telEst" value="Telefono: " />
+                                <h:inputText id="telEst" value="#{creacionEdicionEstudianteController.estudianteCurrent.telefono}" />
+
+                                <p:spacer height="25" />
+
+                            </p:panelGrid>
+                        </p:panel>
+                        <div align ="center">
+                            <p:panelGrid columns="3">
+                                <p:outputPanel rendered="#{creacionEdicionEstudianteController.flagEdicionEstudiante}">
+                                    <p:commandButton value="Guardar" 
+                                                     action="#{creacionEdicionEstudianteController.modificarEstudiante()}" 
+                                                     process="@this,codEst,nomCapacitacion,cargoEst,emailEst,telEst" 
+                                                     update="panelContenedorPadre,dtCapacitaciones" 
+                                                     onclick="PF('dlgLoading').show()" 
+                                                     oncomplete="PF('dlgLoading').hide();"/>
+                                </p:outputPanel>
+                                <p:outputPanel rendered="#{creacionEdicionEstudianteController.flagCreacionEstudiante}">
+                                    <p:commandButton value="Guardar"
+                                                     action="#{creacionEdicionEstudianteController.crearEstudiante()}"
+                                                     process="@this,codEst,nomCapacitacion,cargoEst,emailEst,telEst"  
+                                                     update="panelContenedorPadre,dtCapacitaciones" 
+                                                     onclick="PF('dlgLoading').show()"
+                                                     oncomplete="PF('dlgLoading').hide();"/>
+                                </p:outputPanel>
+                                <p:outputPanel rendered="#{creacionEdicionEstudianteController.flagCancelarEdicionCreacion}">
+                                    <p:commandButton value="Cancelar" 
+                                                     immediate="true"
+                                                     action="#{creacionEdicionEstudianteController.cancelarEdicionCreacion()}" 
+                                                     update="panelContenedorPadre,dtCapacitaciones" 
+                                                     onclick="PF('dlgLoading').show()" 
+                                                     oncomplete="PF('dlgLoading').hide();"/>
+                                </p:outputPanel>
+                            </p:panelGrid>
+                        </div>
+
+                    </p:panel>
+                </div>
+                <p:spacer height="12"/>
+                <div align ="center">
+                    <p:outputPanel rendered="#{creacionEdicionEstudianteController.flagNuevoEstudiante}">
+                        <p:commandButton value="Nuevo Estudiante" 
+                                         action="#{creacionEdicionEstudianteController.prepararCreacionEstudiante()}"
+                                         update="panelContenedorPadre" 
+                                         onclick="PF('dlgLoading').show()" 
+                                         oncomplete="PF('dlgLoading').hide(); " />
+                    </p:outputPanel>
+                </div>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

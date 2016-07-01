@@ -1,0 +1,126 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="../templates/templateContenido.xhtml">
+    <ui:define name="contenido">
+
+        <h:form id="search" onkeypress="if (event.keyCode === 13) {
+                    return false;
+                }">
+
+            <p:growl id="msgs" showDetail="true" />
+
+            <h1>Administración de estudiantes - Capacitación</h1>
+
+            <p:panel header="Consultar estudiante" style="text-align: left">  
+                <div align="center">
+                    <p:panelGrid columns="3">  
+                        <p:outputLabel  for="est1"  />
+                        <p:autoComplete id="est1" 
+                                        value="#{estudianteController.est}" 
+                                        completeMethod="#{estudianteController.encontrarEstudianteEmpleadoPorDescripcion}" 
+                                        emptyMessage="No existen estudiantes con estos criterios de consulta"
+                                        scrollHeight="150"  size="75" 
+                                        itemValue="#{est}" 
+                                        converter="spEstudianteConverter"
+                                        itemLabel="#{est.empestEmployeeshortname}" 
+                                        forceSelection="true"
+                                        var="est"
+                                        minQueryLength="3" 
+                                        >
+                            <p:column headerText="Nro Identificacion">
+                                #{est.empestEmployeeid}
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                #{est.empestEmployeeshortname}
+                            </p:column>
+
+                            <f:ajax event="itemSelect" 
+                                    execute="search:panelPestanas:panelPo" 
+                                    render="@form" 
+                                    />
+
+                        </p:autoComplete>
+                    </p:panelGrid> 
+                </div>
+            </p:panel>
+
+            <p:outputPanel id="panelPrueba" >
+                <p:tabView id="panelPestanas">
+
+                    <p:tab id="tab1" title="Informacion general">
+                        <p:panel header="Informacion estudiante" style="text-align: left" id="paneltabprincipal"  >
+                            <div align="center">
+                                <p:panel id="panelPo" >
+                                    <p:panelGrid columns="4" style="width: 100%" id="panelTab1" > 
+
+                                        <p:outputLabel value="Codigo"/>
+                                        <p:inputText value="#{estudianteController.est.empestEmployeeid}" size="30" readonly="true"/>
+
+                                        <p:outputLabel value="Nombre"/>
+                                        <p:inputText value="#{estudianteController.est.empestEmployeeshortname}" size="30" readonly="true"/>
+
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="4" style="width: 100%" >        
+                                        <p:dataTable id="tablaResultados" 
+                                                     value="#{estudianteController.sophoscapacitationsList}" 
+                                                     var="curso"
+                                                     rows="5"
+                                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                     emptyMessage="No se encontraron cursos"
+                                                     rowsPerPageTemplate="5,10,15"
+                                                     styleClass="tablaRes">
+                                            <f:facet name="header">  
+                                                Lista cursos estudiante 
+                                            </f:facet>
+
+                                            <p:column headerText="Nombre" sortBy="#{curso.capName}"
+                                                      filterBy="#{curso.capName}" filterMatchMode="contains">
+                                                <h:outputText value="#{curso.capName}" />
+                                            </p:column>
+
+                                            <p:column headerText="Fecha de inicio"
+                                                      sortBy="#{curso.capInitDate}"
+                                                      filterBy="#{curso.capInitDate}"
+                                                      filterMatchMode="contains">
+                                                <h:outputText value="#{curso.capInitDate}" />
+                                            </p:column>
+
+                                            <p:column headerText="Fecha fin"
+                                                      sortBy="#{curso.capEndDate}"
+                                                      filterBy="#{curso.capEndDate}" filterMatchMode="contains">
+                                                <h:outputText value="#{curso.capEndDate}" />
+                                            </p:column>
+
+                                            <p:column headerText="Categoria"
+                                                      sortBy="#{curso.capCategory.catname}"
+                                                      filterBy="#{curso.capCategory.catname}"
+                                                      filterMatchMode="contains">
+                                                <h:outputText value="#{curso.capCategory.catname}" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </p:panelGrid>
+                                </p:panel>
+                            </div>
+                            <p:spacer height="25" />
+
+                        </p:panel>
+
+                    </p:tab>
+
+                </p:tabView>
+            </p:outputPanel>
+
+
+            <p:dialog showHeader="false" widgetVar="dlgLoading" resizable="false"
+                      modal="true" closable="false">
+                <p:panel>
+                    <p:graphicImage value="/resources/img/loading.gif" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

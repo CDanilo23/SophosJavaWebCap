@@ -6,10 +6,18 @@
         <div class="menu">
             <div class="menu-center">
                 <ul id="nav">
-                    <li class="top"><a href="#" class="top_link"><span class="down">Administración de Categorias</span></a>
+                    <li class="top"><a href="#" class="top_link"><span class="down">Administración estudiantes</span></a>
                         <ul class="sub">
-                            <li><h:outputLink value="#{request.contextPath}/faces/categorias/SpCategorias.xhtml" target="_self">Información de Categorias</h:outputLink></li>
+                            <li><h:outputLink value="#{request.contextPath}/faces/pages/SpHome.xhtml" target="_self">Información cursos por estudiante</h:outputLink></li>
+                             <li><h:outputLink value="#{request.contextPath}/faces/estudiantes/SpEstudiantes.xhtml" target="_self">Administracion estudiantes </h:outputLink></li>
+                             <li><h:outputLink value="#{request.contextPath}/faces/estudiantes/SpAsociacionEstudiantesCap.xhtml" target="_self">Asignacion capacitaciones a estudiantes </h:outputLink></li>
                         </ul>
+                    </li>
+                    <li class="top"><a href="#" class="top_link"><span class="down">Configuracion</span></a>
+                         <ul class="sub">
+                            <li><h:outputLink value="#{request.contextPath}/faces/categorias/SpCategorias.xhtml" target="_self">Información de Categorias</h:outputLink></li>
+                            <li><h:outputLink value="#{request.contextPath}/faces/capacitaciones/SpCapacitaciones.xhtml" target="_self">Información de Capacitaciones</h:outputLink></li>
+                         </ul>
                     </li>
                    
                 </ul>

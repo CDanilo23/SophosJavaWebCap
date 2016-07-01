@@ -5,10 +5,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package co.com.sophos.entities;
+package co.com.sophos.entidades;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +18,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -28,35 +30,36 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "SOPHOSCAPCATEGORIES")
-//@NamedQueries({
-//    @NamedQuery(name = "Sophoscapcategories.findAll", query = "SELECT s FROM Sophoscapcategories s"),
-//    @NamedQuery(name = "Sophoscapcategories.findByCatId", query = "SELECT s FROM Sophoscapcategories s WHERE s.catId = :catId"),
-//    @NamedQuery(name = "Sophoscapcategories.findByCatName", query = "SELECT s FROM Sophoscapcategories s WHERE s.catName = :catName"),
-//    @NamedQuery(name = "Sophoscapcategories.findByCatDescription", query = "SELECT s FROM Sophoscapcategories s WHERE s.catDescription = :catDescription"),
-//    @NamedQuery(name = "Sophoscapcategories.findByCatKeyWords", query = "SELECT s FROM Sophoscapcategories s WHERE s.catKeyWords = :catKeyWords")})
+@NamedQueries({
+    @NamedQuery(name = "Sophoscapcategories.findAll", query = "SELECT s FROM Sophoscapcategories s"),
+    @NamedQuery(name = "Sophoscapcategories.findByCatId", query = "SELECT s FROM Sophoscapcategories s WHERE s.catid = :catid"),
+    @NamedQuery(name = "Sophoscapcategories.findByCatName", query = "SELECT s FROM Sophoscapcategories s WHERE s.catname = :catname"),
+    @NamedQuery(name = "Sophoscapcategories.findByCatDescription", query = "SELECT s FROM Sophoscapcategories s WHERE s.catdescription = :catdescription"),
+    @NamedQuery(name = "Sophoscapcategories.findByCatKeyWords", query = "SELECT s FROM Sophoscapcategories s WHERE s.catkeywords = :catkeywords")})
 public class Sophoscapcategories implements Serializable {
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+
+    @OneToMany(mappedBy = "capCategory")
+    private List<Sophoscapacitations> sophoscapacitationsList;
+
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "CATID")
-    @GeneratedValue(generator="CATEGORIA_SEQ",strategy=GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "CATEGORIA_SEQ", sequenceName = "CATEGORIA_SEQ", initialValue = 1, allocationSize = 1)
+    @Column(name = "CAT_ID")
+    @GeneratedValue(generator="CATEGORIAS_SEQ",strategy=GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "CATEGORIAS_SEQ", sequenceName = "CATEGORIAS_SEQ", initialValue = 1, allocationSize = 1)
     private BigDecimal catid;
     @Size(max = 30)
-    @Column(name = "CATNAME")
+    @Column(name = "CAT_NAME")
     private String catname;
     @Size(max = 30)
-    @Column(name = "CATDESCRIPTION")
+    @Column(name = "CAT_DESCRIPTION")
     private String catdescription;
     @Size(max = 30)
-    @Column(name = "CATKEYWORDS")
+    @Column(name = "CAT_KEY_WORDS")
     private String catkeywords;
 
     public Sophoscapcategories() {
     }
-
-    
 
     @Override
     public int hashCode() {
@@ -117,6 +120,14 @@ public class Sophoscapcategories implements Serializable {
 
     public void setCatkeywords(String catkeywords) {
         this.catkeywords = catkeywords;
+    }
+
+    public List<Sophoscapacitations> getSophoscapacitationsList() {
+        return sophoscapacitationsList;
+    }
+
+    public void setSophoscapacitationsList(List<Sophoscapacitations> sophoscapacitationsList) {
+        this.sophoscapacitationsList = sophoscapacitationsList;
     }
 
 }

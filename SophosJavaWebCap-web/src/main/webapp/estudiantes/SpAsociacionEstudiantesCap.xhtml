@@ -1,0 +1,138 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="../templates/templateContenido.xhtml">
+    <ui:define name="contenido">
+
+        <h:form id="search" onkeypress="if (event.keyCode === 13) {
+                    return false;
+                }">
+
+            <p:growl id="msgs" showDetail="true" />
+
+            <h1>Asignación capacitaciones a estudiantes</h1>
+
+
+            <p:panel id="contenPadreAsociaciones" header="Informacion Estudiantes" style="text-align: left"> 
+
+                <p:panel id="contentTabla">
+                    <p:panelGrid columns="4" id="gridEstudiantesPrincipal">
+
+                        <p:dataTable value="#{creacionEdicionEstudianteController.estudiantes}"
+                                     id="dtCapacitaciones" 
+                                     paginator="true" 
+                                     rows="5"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     emptyMessage="No se encontraron estudiantes"
+                                     rowsPerPageTemplate="5,10,15" 
+                                     styleClass="tablaRes"
+                                     var="estu" scrollWidth="95%" scrollable="true">
+                            <f:facet name="header">  
+                                Lista estudiantes
+                            </f:facet>
+
+                            <p:column headerText="Codigo" 
+                                      width="30%"
+                                      sortBy="#{estu.empestEmployeeid}"
+                                      filterBy="#{estu.empestEmployeeid}"
+                                      filterMatchMode="contains">
+                                <h:outputText value="#{estu.empestEmployeeid}" />
+                            </p:column>
+
+                            <p:column headerText="Nombre"
+                                      width="30%"
+                                      sortBy="#{estu.empestEmployeeshortname}"
+                                      filterBy="#{estu.empestEmployeeshortname}" 
+                                      filterMatchMode="contains">
+                                <h:outputText value="#{estu.empestEmployeeshortname}" />
+                            </p:column>
+
+                            <p:column headerText="Cargo"
+                                      width="30%"
+                                      sortBy="#{estu.cargo}"
+                                      filterBy="#{estu.cargo}" 
+                                      filterMatchMode="contains">
+                                <h:outputText value="#{estu.cargo}" />
+                            </p:column>
+
+                            <p:column headerText="Email"
+                                      width="60%"
+                                      sortBy="#{estu.email}"
+                                      filterBy="#{estu.email}"
+                                      filterMatchMode="contains"
+                                      >
+                                <h:outputText value="#{estu.email}" />
+                            </p:column>
+
+                            <p:column headerText="Telefono"
+                                      width="30%"
+                                      sortBy="#{estu.telefono}"
+                                      filterBy="#{estu.telefono}" 
+                                      filterMatchMode="contains">
+                                <h:outputText value="#{estu.telefono}" />
+                            </p:column>
+
+                            <!-- Asignar -->
+                            <p:column headerText="Asignar Capacitacion"
+                                      width="30%"
+                                      style="font-size:11px; font-weight: bold">
+                                <div align ="center">
+                                    <p:commandLink action="#{asociacionEstudiantesCapController.mostrarComponenteDualList(estu)}"
+                                        ajax="false" immediate="true" process="@form">
+                                        <p:graphicImage id="imgEdit" value="/resources/img/asignar.png"/>
+                                    </p:commandLink>
+                                </div>    
+                            </p:column>
+                            
+                        </p:dataTable>
+                    </p:panelGrid>
+                </p:panel>
+            </p:panel>
+            
+            <p:outputPanel id="panelPrueba" rendered="#{asociacionEstudiantesCapController.flagAsoc}">
+                        <p:panel id="contenMedioAsociaciones"  
+                                 header="Informacion estudiante" 
+                                 style="text-align: left" 
+                                 >
+
+                            <div align="center">
+                                <p:panel id="contenedorPadreAsignaciones" 
+                                         header="Informacion cursos asignados por estudiantes" 
+                                         style="text-align: left" >
+
+                                    <div align="center">
+                                        <p:outputPanel id="contenPickList">
+                                            <p:pickList id="pickList" 
+                                                        effect="fade" 
+                                                        value="#{asociacionEstudiantesCapController.pickListCap}" 
+                                                        var="pickListCap" 
+                                                        itemValue="#{pickListCap}" 
+                                                        itemLabel="#{pickListCap.capName}" 
+                                                        converter="spAsocEstCapConverter" />
+                                        </p:outputPanel>
+                                        <p:commandButton value="Guardar" 
+                                                         action="#{asociacionEstudiantesCapController.guardarCapacitaciones()}" 
+                                                         ajax="false" 
+                                                         process="@form"
+                                                         />
+                                    </div>
+
+                                </p:panel> 
+                            </div>
+                            <p:spacer height="25" />
+
+                        </p:panel>
+                    </p:outputPanel>
+
+
+            <p:dialog showHeader="false" widgetVar="dlgLoading" resizable="false"
+                      modal="true" closable="false">
+                <p:panel>
+                    <p:graphicImage value="/resources/img/loading.gif" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

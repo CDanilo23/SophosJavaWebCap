@@ -1,0 +1,151 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="../templates/templateContenido.xhtml">
+    <ui:define name="contenido">
+        <h:form id="search" onkeypress="if (event.keyCode === 13) {
+                    return false;
+                }">
+            
+            <h1>Configuracion Capacitaciones</h1>
+
+            <p:panel id="panelContenedorPadre" header="Informacion Capacitaciones" style="text-align: left">
+                <div align="center">
+
+                    <p:panel id="panelContenedorTabla">
+                        <p:panelGrid columns="4" id="gridCapacitacionesPrincipal" rendered="#{capacitacionesController.flagDataTable}">
+
+                            <p:dataTable value="#{capacitacionesController.capacitaciones}"
+                                         id="dtCapacitaciones" 
+                                         paginator="true" 
+                                         rows="5"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         emptyMessage="No se encontraron capacitaciones"
+                                         rowsPerPageTemplate="5,10,15" 
+                                         styleClass="tablaRes"
+                                         var="cap" >
+                                <f:facet name="header">  
+                                    Lista capacitaciones
+                                </f:facet>
+
+                                <p:column headerText="Nombre" 
+                                          sortBy="#{cap.capName}"
+                                          filterBy="#{cap.capName}" 
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{cap.capName}" />
+                                </p:column>
+
+                                <p:column headerText="Categoria"
+                                          sortBy="#{cap.capCategory.catname}"
+                                          filterBy="#{cap.capCategory.catname}"
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{cap.capCategory.catname}" />
+                                </p:column>
+
+                                <p:column headerText="fecha inicio"
+                                          sortBy="#{cap.capInitDate}"
+                                          filterBy="#{cap.capInitDate}" 
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{cap.capInitDate}" />
+                                </p:column>
+
+                                <p:column headerText="fecha fin"
+                                          sortBy="#{cap.capEndDate}"
+                                          filterBy="#{cap.capEndDate}" 
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{cap.capEndDate}" />
+                                </p:column>
+
+                                <!-- Editar -->
+                                <p:column headerText="Editar" style="font-size:11px; font-weight: bold">
+                                    <div align ="center">
+                                        <p:commandLink>
+                                            <p:ajax listener="#{capacitacionesController.prepararEdicionCapacitacion(cap)}" update="@form" immediate="true" />
+                                            <p:graphicImage id="imgEdit" value="/resources/img/editar.png"/>
+                                        </p:commandLink>
+                                    </div>    
+                                </p:column>
+
+                                <!--Eliminar-->
+                                <p:column headerText="Eliminar" style="font-size:11px; font-weight: bold">
+                                    <div align ="center">
+                                        <p:commandLink action="#{capacitacionesController.eliminarCapacitacion(cap)}"
+                                                       onclick="if (!confirm('Esta seguro que desea eliminar este registro?'))
+                                                                   return false;"
+                                                       ajax="false" immediate="true" process="@form">
+                                            <p:graphicImage id="imgElim"
+                                                            value="/resources/img/eliminar.png" />
+                                        </p:commandLink>
+                                    </div>
+                                </p:column>
+
+                            </p:dataTable>
+                        </p:panelGrid>
+
+                        <p:panel header="Informacion capacitacion" style="text-align: left" id="paneltabprincipal"
+                                 rendered="#{capacitacionesController.flagCEcapacitacion}">
+                            <p:panelGrid columns="4">
+
+
+                                <p:outputLabel for="nomCapacitacion" value="Nombre: " />
+                                <h:inputText id="nomCapacitacion" value="#{capacitacionesController.capacitacionCurrent.capName}" />
+
+                                <p:outputLabel value="Categoria: "
+                                               for="nomCategoria"
+                                               style="text-align: left"/>
+                                <p:selectOneMenu id="nomCategoria" 
+                                                 style="width: 200px"
+                                                 filter="true"
+                                                 filterMatchMode="contains"
+                                                 effect="fade"
+                                                 value="#{capacitacionesController.categoriaCurrent.catid}"
+                                                 >
+                                    <f:selectItems value="#{capacitacionesController.listaCategoriaPorCapacitacion}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="fecIni" value="Fecha inicio: " />
+                                <p:calendar id="fecIni" value="#{capacitacionesController.capacitacionCurrent.capInitDate}" />
+
+                                <p:outputLabel for="fecFin" value="Fecha final: " />
+                                <p:calendar id="fecFin" value="#{capacitacionesController.capacitacionCurrent.capEndDate}" />
+                                <p:spacer height="25" />
+
+                            </p:panelGrid>
+                        </p:panel>
+                        <div align ="center">
+                            <p:outputPanel rendered="#{capacitacionesController.flagEdicionCapacitacion}">
+                                <p:commandButton value="Guardar" 
+                                                 action="#{capacitacionesController.actualizarCapacitacion()}" 
+                                                 process="@this,nomCapacitacion,nomCategoria,fecIni,fecFin" 
+                                                 update="panelContenedorPadre,dtCapacitaciones" 
+                                                 onclick="PF('dlgLoading').show()" 
+                                                 oncomplete="PF('dlgLoading').hide();"/>
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{capacitacionesController.flagCreacionCapacitacion}">
+                                <p:commandButton value="Guardar"
+                                                 action="#{capacitacionesController.crearCapacitacion()}"
+                                                 process="@this,nomCapacitacion,nomCategoria,fecIni,fecFin" 
+                                                 update="panelContenedorPadre,dtCapacitaciones" 
+                                                 onclick="PF('dlgLoading').show()"
+                                                 oncomplete="PF('dlgLoading').hide();"/>
+                            </p:outputPanel>
+                        </div>
+
+                    </p:panel>
+                </div>
+                <p:spacer height="12"/>
+                <div align ="center">
+                    <p:outputPanel rendered="#{capacitacionesController.flagNuevaCapacitacion}">
+                        <p:commandButton value="Nueva Capacitacion" 
+                                         action="#{capacitacionesController.prepararCreacionCapacitacion()}"
+                                         update="panelContenedorPadre" 
+                                         onclick="PF('dlgLoading').show()" 
+                                         oncomplete="PF('dlgLoading').hide(); " />
+                    </p:outputPanel>
+                </div>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>
