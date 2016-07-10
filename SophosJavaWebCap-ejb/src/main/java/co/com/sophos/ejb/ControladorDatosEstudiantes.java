@@ -5,12 +5,18 @@
  */
 package co.com.sophos.ejb;
 
-import co.com.sophos.entidades.Sophosemployeestudent;
 import java.util.List;
+
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
+import co.com.sophos.entidades.Sophosemployeestudent;
 
 /**
  *
@@ -21,6 +27,9 @@ public class ControladorDatosEstudiantes implements IControladorDatosEstudiantes
     
     @PersistenceContext(unitName = "OraclePU")
     private EntityManager em;
+    
+    @Inject
+    ControladorAuditoriaAsync auditoriaAsync;
     
     @Override
     public List<Sophosemployeestudent> obtenerEstudiantesEmpleadosPorDescripcion(String desc) throws Exception {
@@ -87,6 +96,7 @@ public class ControladorDatosEstudiantes implements IControladorDatosEstudiantes
     @Override
     public void registrarEstudiante(Sophosemployeestudent estudiante) throws Exception {
         try {
+        	auditoriaAsync.algo();
             em.persist(estudiante);
         } catch (Exception e) {
             throw e;
